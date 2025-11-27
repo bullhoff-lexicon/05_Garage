@@ -23,6 +23,39 @@ internal class Vehicle : IVehicle {
 		set => GetType().GetProperty(key)?.SetValue(this, value);
 	}
 
+	// public static string GetVehicleType(Vehicle vehicle) {
+	// 	return vehicle?.GetType().Name ?? nameof(Vehicle);
+	// }
+
+
+	// public static string GetVehicleType<T>() {
+	// 	if (this == null) return typeof(T).ToString().Split('.').Last();
+	// 	return this.GetType().ToString().Split('.').Last();
+	// }
+	// public static System.Reflection.PropertyInfo[]? GetProperties<T>(this T vehicle) {
+	// 	if (vehicle == null) return null;
+	// 	string vehicleType = vehicle.GetType().ToString().Split('.').Last();
+	// 	return (vehicleType.ToLower() switch {
+	// 		"car" => typeof(Car),
+	// 		"motorcycle" => typeof(Motorcycle),
+	// 		"airplane" => typeof(Airplane),
+	// 		"bus" => typeof(Bus),
+	// 		"boat" => typeof(Boat),
+	// 		_ => typeof(Vehicle),
+	// 	})?.GetProperties();
+	// }
+	// public static System.Reflection.PropertyInfo[]? GetProperties<T>(this Type vehicleClass) {
+	// 	string vehicleType = vehicleClass.ToString().Split('.').Last();
+	// 	return (vehicleType.ToLower() switch {
+	// 		"car" => typeof(Car),
+	// 		"motorcycle" => typeof(Motorcycle),
+	// 		"airplane" => typeof(Airplane),
+	// 		"bus" => typeof(Bus),
+	// 		"boat" => typeof(Boat),
+	// 		_ => typeof(Vehicle),
+	// 	})?.GetProperties();
+	// }
+
 }
 
 internal class Car : Vehicle {

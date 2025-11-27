@@ -1,4 +1,4 @@
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Garage.Tests")]
+// [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Garage.Tests")]
 
 namespace Garage {
 	public class Program {

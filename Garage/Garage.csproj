@@ -13,5 +13,12 @@
 		<Compile Remove="_*" />
 		<Compile Remove="*/_*" />
 	</ItemGroup>
-
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>Garage.Tests</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="Moq" Version="4.20.72" />
+	</ItemGroup>
 </Project>

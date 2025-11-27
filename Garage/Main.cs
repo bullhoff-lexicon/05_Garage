@@ -15,9 +15,13 @@ internal struct Stuff {
 internal class Main {
 	static List<Manager> garages = new List<Manager>();
 	public void Run() {
-		int ans = Util.PromptValidInt($"{Style.PromptText} Enter garage size: {Style.Reset}", 0, 200, new Dictionary<char, int> { { 'q', 0 }, });
-		if (ans == 0) return;
-		garages.Add(new Manager(ans));
+		// int ans = Util.PromptValidInt($"{Style.PromptText} Enter garage size: {Style.Reset}", 0, 200, new Dictionary<char, int> { { 'q', 0 }, });
+		// if (ans == 0) return;
+		// garages.Add(new Manager(ans));
+		// garages.Last().ShowMainMenu();
+		int ans = Util.PromptValidInt($"{Style.PromptText} Enter garage size: {Style.Reset}", 0, 200);
+		if (ans == 0) garages.Add(new Manager());
+		else garages.Add(new Manager(ans));
 		garages.Last().ShowMainMenu();
 	}
 	// static Dictionary<string, Action> actionMap = new Dictionary<string, Action>{
@@ -45,21 +49,21 @@ internal class Main {
 }
 
 internal class Manager {
-	// private GarageHandler garage;
-	private Garage<Vehicle> garage;
+	private readonly GarageHandler garage;
+	// private Garage<Vehicle> garage;
 	private Dictionary<string, Action> actionMap;
 
 	public Manager(int size = 50) {
-		// garage = new GarageHandler(new Garage<Vehicle>(size));
-		garage = new Garage<Vehicle>(size);
+		garage = new GarageHandler(new Garage<Vehicle>(size));
+		// garage = new Garage<Vehicle>(size);
 		actionMap = new Dictionary<string, Action>{
-			{ "Populate garage", ()=> { PopulateGarage(); UI.PrintGarage(garage); } },
+			{ "Populate garage", ()=> { PopulateGarage(); garage.Print(); } },
 			{ "Add vehicle", ()=> PromptVehicle() },
 			{ "Remove vehicle", ()=> PromptRemoveVehicle() },
 			{ "Search", ()=> PromptSearch() },
-			{ "Search Registration plate", ()=> PromptSearch() },
-			{ "Print garage", ()=> UI.PrintGarage(garage) },
-			{ "Print vehicle type count", ()=> UI.PrintVehicleTypeCount(garage) },
+			{ "Search licence plate", ()=> PromptSearchLicencePlate() },
+			{ "Print garage", ()=> garage.Print() },
+			{ "Print vehicle type count", ()=> garage.PrintVehicleTypeCount() },
 		};
 	}
 
@@ -86,22 +90,25 @@ internal class Manager {
 		AddVehicle(new Bus("jkl126", "black", 4));
 		AddVehicle(new Boat("mno125", "black"));
 	}
+	public Vehicle? AddVehicle(Vehicle? vehicle = null) { return garage.AddVehicle(vehicle); }
 
-	public Vehicle? AddVehicle(Vehicle? vehicle = null) {
-		if (vehicle == null) return null;
-		int index = garage.FindIndex(v => v.LicencePlate == vehicle.LicencePlate);
-		if (index == -1) {
-			bool res = garage.Add(vehicle);
-			if (!res) Console.WriteLine($"Garage is full, couldnt add {vehicle.LicencePlate}");
-		} else {
-			Console.WriteLine($"{vehicle.LicencePlate} already exists");
+
+	public Vehicle? PromptSearchLicencePlate() {
+		string licencePlate = Util.PromptString($"{Style.PromptText} LicencePlate:{Style.Reset} ").ToLower();
+		if (licencePlate == "") return null;
+		try {
+			Vehicle vehicle = garage.GetEnumerator().Where(v => v.LicencePlate?.ToLower() == licencePlate).Last();
+			garage.PrintVehicle(vehicle);
+			return vehicle;
+		} catch {
+			Console.WriteLine($"No vehicle with licence plate {licencePlate} found");
 		}
-		return vehicle;
+		return null;
 	}
 
 	public void PromptSearch() {
 		string vehicleType = Util.PromptString($"{Style.PromptText} Vehicle type ({Stuff.VehicleTypesCsv}):{Style.Reset} ", str => str == "" || Enum.IsDefined(typeof(VehicleTypes), str.ToLower()));
-		IEnumerable<Vehicle> q = garage;
+		IEnumerable<Vehicle> q = garage.GetEnumerator();
 		if (vehicleType != "") q = q.Where(v => vehicleType.ToLower() == v.GetType().ToString().Split('.').Last().ToLower());
 		if (vehicleType == "") vehicleType = "Vehicle";
 		var properties = Type.GetType(typeof(Vehicle).Namespace + "." + vehicleType.Capitalize())?.GetProperties();
@@ -120,19 +127,14 @@ internal class Manager {
 			}
 		}
 		Console.WriteLine("\nMatches:");
-		foreach (var v in q) {
-			UI.PrintVehicle(v);
-		}
+		foreach (var v in q) garage.PrintVehicle(v);
+
 	}
 
 	public void PromptRemoveVehicle() {
-		foreach (var v in garage) {
-			var type = v.GetType().ToString().Split('.').Last();
-			Console.WriteLine($"{type,-10} {v.LicencePlate,-6}  {v.Color,-6}  {v.Wheels} ");
-		}
+		garage.Print();
 		string licencePlace = Util.PromptString("Enter Licenceplate of vehicle to remove: ", str => garage.GetVehicle(str) != null);
-		int index = garage.FindIndex(v => v.LicencePlate == licencePlace);
-		garage.Remove(index);
+		garage.Remove(licencePlace);
 	}
 
 	public void PromptVehicle() {
@@ -165,6 +167,7 @@ internal class Manager {
 				}
 			}
 		}
+		garage.AddVehicle(vehicle);
 	}
 }
 
