@@ -19,33 +19,39 @@ namespace Garage.Helpers {
 
 
 		public static int PromptValidInt(string prompt = "", int min = int.MinValue, int max = int.MaxValue, Dictionary<char, int>? charMap = null) {
-			int result;
 			while (true) {
 				Console.Write(prompt);
 				if (min >= 0 && max < 10) {
 					char chr = getChar();
 					if (charMap != null && charMap.ContainsKey(chr)) return charMap[chr];
-					if (int.TryParse(chr.ToString(), out result) && result >= min && result <= max) return result;
-				} else if (int.TryParse(Console.ReadLine(), out result) && result >= min && result <= max) {
-					return result;
+					if (int.TryParse(chr.ToString(), out int result) && result >= min && result <= max) return result;
+				} else {
+					string str = Console.ReadLine() ?? string.Empty;
+					if (charMap != null && str.Length<=1) {
+						char chr = str.Length==0? ' ' : str[0];
+						if(charMap.ContainsKey(chr)) return charMap[chr];
+					}
+					if (int.TryParse(str, out int result) && result >= min && result <= max) {
+						return result;
+					}
 				}
 				Console.Write(Messages.TryAgainMessage);
 			}
 		}
-		public static int PromptValidInt(string[] prompt, int min = int.MinValue, int max = int.MaxValue, Dictionary<char, int>? charMap = null) {
-			int result;
-			while (true) {
-				for (int i = 0; i < prompt.Length; i++) Console.WriteLine(prompt[i]);
-				if (min >= 0 && max < 10) {
-					char chr = getChar();
-					if (charMap != null && charMap.ContainsKey(chr)) return charMap[chr];
-					if (int.TryParse(chr.ToString(), out result) && result >= min && result <= max) return result;
-				} else if (int.TryParse(Console.ReadLine(), out result) && result >= min && result <= max) {
-					return result;
-				}
-				Console.Write(Messages.TryAgainMessage);
-			}
-		}
+		// public static int PromptValidInt(string[] prompt, int min = int.MinValue, int max = int.MaxValue, Dictionary<char, int>? charMap = null) {
+		// 	int result;
+		// 	while (true) {
+		// 		for (int i = 0; i < prompt.Length; i++) Console.WriteLine(prompt[i]);
+		// 		if (min >= 0 && max < 10) {
+		// 			char chr = getChar();
+		// 			if (charMap != null && charMap.ContainsKey(chr)) return charMap[chr];
+		// 			if (int.TryParse(chr.ToString(), out result) && result >= min && result <= max) return result;
+		// 		} else if (int.TryParse(Console.ReadLine(), out result) && result >= min && result <= max) {
+		// 			return result;
+		// 		}
+		// 		Console.Write(Messages.TryAgainMessage);
+		// 	}
+		// }
 
 		public static int PromptInt(string prompt = "") {
 			int result;
@@ -62,10 +68,10 @@ namespace Garage.Helpers {
 			return getString();
 			// return Console.ReadLine() ?? string.Empty;
 		}
-		public static string PromptString(string[] prompt) {
-			for (int i = 0; i < prompt.Length; i++) Console.WriteLine(prompt[i]);
-			return Console.ReadLine() ?? string.Empty;
-		}
+		// public static string PromptString(string[] prompt) {
+		// 	for (int i = 0; i < prompt.Length; i++) Console.WriteLine(prompt[i]);
+		// 	return Console.ReadLine() ?? string.Empty;
+		// }
 
 		public static string PromptString(string prompt, Func<string, bool> func) {
 			while (true) {
@@ -83,11 +89,25 @@ namespace Garage.Helpers {
 			char chr = getChar();
 			return char.ToLower(chr);
 		}
-		public static char PromptChar(string[] prompt) {
-			for (int i = 0; i < prompt.Length; i++) Console.WriteLine(prompt[i]);
-			char chr = getChar();
-			return char.ToLower(chr);
+		// public static char PromptChar(string[] prompt) {
+		// 	for (int i = 0; i < prompt.Length; i++) Console.WriteLine(prompt[i]);
+		// 	char chr = getChar();
+		// 	return char.ToLower(chr);
+		// }
+
+
+		public static int PromptAction(Dictionary<string, Action> actionMap, string exitString = "Exit") {
+			// Console.WriteLine();
+			int i = 0;
+			foreach (var (key, value) in actionMap) {
+				Console.WriteLine($"{i + 1}. {key}");
+				i++;
+			}
+			Console.WriteLine($"0. {exitString}");
+			int ans = Util.PromptValidInt($"", 0, actionMap.Count, new Dictionary<char, int> { { 'q', 0 }, });
+			return ans;
 		}
+
 
 
 
