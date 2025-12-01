@@ -12,14 +12,14 @@ internal struct Stuff {
 	public static string VehicleTypesCsv = string.Join(",", Enum.GetValues(typeof(VehicleTypes)).Cast<VehicleTypes>().Select(v => v.ToString()));
 }
 
-internal class Main {
+internal class Manager {
 	UI _ui = new UI();
 	GarageHandler _garageHandler = new GarageHandler();
 
 	private readonly Dictionary<string, Action> _actionsMainMenu;
 	private readonly Dictionary<string, Action> _actionsGarage;
 
-	public Main() {
+	public Manager() {
 		_actionsMainMenu = new Dictionary<string, Action>{
 			{
 				"Create garage, populate and print", ()=> {

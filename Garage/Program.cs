@@ -3,7 +3,7 @@
 namespace Garage {
 	public class Program {
 		static void Main() {
-			Main main = new Main();
+			Manager main = new Manager();
 			main.Run();
 		}
 	}
